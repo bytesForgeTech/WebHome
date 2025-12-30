@@ -94,7 +94,7 @@ export function BookmarkGrid({
                                     <div
                                         key={bookmark.id}
                                         className={`relative rounded-xl transition-all overflow-hidden group ${currentView === 'grid'
-                                            ? `flex flex-col p-3 lg:p-4 min-h-[100px] lg:min-h-[120px] shadow-card hover:shadow-float hover:-translate-y-0.5 ${index % 3 === 0 ? 'bg-accent-teal' : index % 3 === 1 ? 'bg-primary-orange' : 'bg-accent-coral'
+                                            ? `flex flex-col p-3 lg:p-4 min-h-25 lg:min-h-30 shadow-card hover:shadow-float hover:-translate-y-0.5 ${index % 3 === 0 ? 'bg-accent-teal' : index % 3 === 1 ? 'bg-primary-orange' : 'bg-accent-coral'
                                             }`
                                             : "flex items-center gap-3 p-3 bg-bg-card hover:bg-bg-input border border-transparent hover:border-gray-200/50 shadow-sm"
                                             }`}
@@ -106,7 +106,7 @@ export function BookmarkGrid({
                                             className={currentView === 'grid' ? "flex flex-col flex-1 text-white" : "flex items-center gap-3 flex-1 min-w-0"}
                                         >
                                             {currentView === 'list' && (
-                                                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 text-lg overflow-hidden">
+                                                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 text-lg overflow-hidden">
                                                     <img
                                                         src={`https://www.google.com/s2/favicons?domain=${getDomain(bookmark.url)}&sz=64`}
                                                         alt=""

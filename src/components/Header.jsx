@@ -1,6 +1,6 @@
-import { Upload, Download, Moon, Sun } from 'lucide-react';
+import { Upload, Download, Moon, Sun, Image } from 'lucide-react';
 
-export function Header({ theme, toggleTheme, onImport, onExport, hasBookmarks }) {
+export function Header({ theme, toggleTheme, onImport, onExport, hasBookmarks, onRefreshWallpaper }) {
     const getGreeting = () => {
         const hour = new Date().getHours();
         if (hour < 12) return 'Good Morning';
@@ -21,6 +21,13 @@ export function Header({ theme, toggleTheme, onImport, onExport, hasBookmarks })
                     </div>
                 </div>
                 <div className="flex gap-2">
+                    <button
+                        onClick={onRefreshWallpaper}
+                        className="w-9 h-9 rounded-xl bg-bg-card flex items-center justify-center shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
+                        title="Change Wallpaper"
+                    >
+                        <Image className="w-4 h-4 text-text-primary" />
+                    </button>
                     <button
                         onClick={toggleTheme}
                         className="w-9 h-9 rounded-xl bg-bg-card flex items-center justify-center shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"

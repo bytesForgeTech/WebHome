@@ -28,14 +28,14 @@ export function RecentBookmarks({ recentBookmarks }) {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-input hover:translate-x-0.5 transition-all"
                     >
-                        <div className="w-9 h-9 rounded-lg bg-accent-yellow flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 rounded-lg bg-accent-yellow flex items-center justify-center shrink-0">
                             <Bookmark className="w-4 h-4 text-text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-text-primary truncate">{bookmark.title}</div>
                             <div className="text-xs text-text-muted truncate">{getDomain(bookmark.url)}</div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-text-muted flex-shrink-0" />
+                        <ChevronRight className="w-4 h-4 text-text-muted shrink-0" />
                     </a>
                 ))}
             </div>

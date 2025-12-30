@@ -28,7 +28,7 @@ export function BookmarkModal({ isOpen, onClose, onSave, initialData, availableF
 
     return (
         <div
-            className="fixed inset-0 bg-black/40 flex items-end lg:items-center justify-center p-0 lg:p-4 z-[100]"
+            className="fixed inset-0 bg-black/40 flex items-end lg:items-center justify-center p-0 lg:p-4 z-100"
             onClick={onClose}
         >
             <div

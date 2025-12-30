@@ -40,7 +40,7 @@ export function SearchSection({
                                 </button>
 
                                 {showEngineDropdown && (
-                                    <div className="absolute top-full mt-2 left-0 min-w-[180px] bg-bg-card rounded-xl shadow-float p-1.5 animate-in fade-in slide-in-from-top-2 duration-200 border border-gray-100/50">
+                                    <div className="absolute top-full mt-2 left-0 min-w-45 bg-bg-card rounded-xl shadow-float p-1.5 animate-in fade-in slide-in-from-top-2 duration-200 border border-gray-100/50">
                                         {searchEngines.map((engine) => (
                                             <button
                                                 key={engine.id}

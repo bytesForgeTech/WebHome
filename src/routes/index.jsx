@@ -10,6 +10,8 @@ import { RecentBookmarks } from '../components/RecentBookmarks';
 import { BottomNav } from '../components/BottomNav';
 import { BookmarkModal } from '../components/BookmarkModal';
 
+import { useWallpaper } from '../hooks/useWallpaper';
+
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
@@ -17,6 +19,7 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const { theme, toggleTheme } = useTheme();
   const { bookmarks, addBookmark, updateBookmark, deleteBookmark, importBookmarks } = useBookmarks();
+  const { wallpaper, fetchNewWallpaper, loading } = useWallpaper();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState(null);
@@ -96,69 +99,80 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pb-24 lg:pb-6 lg:pl-20 relative overflow-x-hidden">
-      <Header
-        theme={theme}
-        toggleTheme={toggleTheme}
-        onImport={handleImport}
-        onExport={handleExport}
-        hasBookmarks={bookmarks.length > 0}
-      />
+    <div
+      className="min-h-screen flex flex-col pb-24 lg:pb-6 lg:pl-20 relative overflow-x-hidden transition-all duration-500 ease-in-out bg-cover bg-center bg-fixed bg-no-repeat"
+      style={{
+        backgroundImage: wallpaper ? `url(${wallpaper})` : undefined
+      }}
+    >
+      {/* Overlay to ensure text readability */}
+      <div className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 ${wallpaper ? 'bg-bg-solid/85 backdrop-blur-sm' : ''}`} />
 
-      <section className="px-5 pb-4 lg:px-12 lg:pb-3">
-        <h1 className="text-2xl lg:text-3xl font-bold leading-snug text-text-primary max-w-7xl mx-auto">
-          Your WebHome
-        </h1>
-      </section>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          onImport={handleImport}
+          onExport={handleExport}
+          hasBookmarks={bookmarks.length > 0}
+          onRefreshWallpaper={fetchNewWallpaper}
+        />
 
-      <SearchSection
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-        folders={folders}
-        bookmarksCount={bookmarks.length}
-        selectedEngineId={selectedEngineId}
-        setSelectedEngineId={setSelectedEngineId}
-      />
+        <section className="px-5 pb-4 lg:px-12 lg:pb-3">
+          <h1 className="text-2xl lg:text-3xl font-bold leading-snug text-text-primary max-w-7xl mx-auto">
+            Your WebHome
+          </h1>
+        </section>
 
-      <MobileFilterSection
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-        folders={folders}
-        bookmarksCount={bookmarks.length}
-      />
+        <SearchSection
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          folders={folders}
+          bookmarksCount={bookmarks.length}
+          selectedEngineId={selectedEngineId}
+          setSelectedEngineId={setSelectedEngineId}
+        />
 
-      <main className="flex-1 px-5 lg:px-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5 lg:gap-8">
-            <BookmarkGrid
-              bookmarks={bookmarks}
-              groupedBookmarks={groupedBookmarks}
-              expandedFolders={expandedFolders}
-              toggleFolder={toggleFolder}
-              onEdit={openEditModal}
-              onDelete={deleteBookmark}
-              onAdd={openAddModal}
-              onImport={handleImport}
-            />
+        <MobileFilterSection
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          folders={folders}
+          bookmarksCount={bookmarks.length}
+        />
 
-            {filteredBookmarks.length > 0 && (
-              <RecentBookmarks recentBookmarks={filteredBookmarks.slice(0, 6)} />
-            )}
+        <main className="flex-1 px-5 lg:px-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5 lg:gap-8">
+              <BookmarkGrid
+                bookmarks={bookmarks}
+                groupedBookmarks={groupedBookmarks}
+                expandedFolders={expandedFolders}
+                toggleFolder={toggleFolder}
+                onEdit={openEditModal}
+                onDelete={deleteBookmark}
+                onAdd={openAddModal}
+                onImport={handleImport}
+              />
+
+              {filteredBookmarks.length > 0 && (
+                <RecentBookmarks recentBookmarks={filteredBookmarks.slice(0, 6)} />
+              )}
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <BottomNav onAdd={openAddModal} />
+        <BottomNav onAdd={openAddModal} />
 
-      <BookmarkModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveBookmark}
-        initialData={editingBookmark}
-        availableFolders={[...new Set(bookmarks.map((b) => b.folder).filter(Boolean))]}
-      />
+        <BookmarkModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveBookmark}
+          initialData={editingBookmark}
+          availableFolders={[...new Set(bookmarks.map((b) => b.folder).filter(Boolean))]}
+        />
+      </div>
     </div>
   );
 }
