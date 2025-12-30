@@ -142,7 +142,7 @@ function HomePage() {
       }}
     >
       {/* Overlay to ensure text readability */}
-      <div className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 ${activeWallpaper ? 'bg-bg-solid/40 backdrop-blur-[2px]' : ''}`} />
+      <div className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 ${activeWallpaper ? (theme === 'light' ? 'bg-bg-solid/30 backdrop-blur-[0.5px]' : 'bg-bg-solid/40 backdrop-blur-[2px]') : ''}`} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header
@@ -202,7 +202,7 @@ function HomePage() {
         </main>
 
         {/* <BottomNav onAdd={openAddModal} /> */}
-        <BottomNav onAdd={openAddModal} />
+        {/* <BottomNav onAdd={openAddModal} /> */}
 
         <BookmarkModal
           isOpen={isModalOpen}
