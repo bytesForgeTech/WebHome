@@ -1,7 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { useBookmarks, parseBookmarkHTML, generateBookmarkHTML } from '../hooks/useBookmarks';
+// import { parseBookmarkHTML, generateBookmarkHTML } from '../utils/bookmarkUtils';
+import { useWallpaper } from '../hooks/useWallpaper';
 import { Header } from '../components/Header';
 import { SearchSection } from '../components/SearchSection';
 import { MobileFilterSection } from '../components/MobileFilterSection';
@@ -10,13 +12,12 @@ import { RecentBookmarks } from '../components/RecentBookmarks';
 import { BottomNav } from '../components/BottomNav';
 import { BookmarkModal } from '../components/BookmarkModal';
 
-import { useWallpaper } from '../hooks/useWallpaper';
-
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
 function HomePage() {
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { bookmarks, addBookmark, updateBookmark, deleteBookmark, importBookmarks } = useBookmarks();
   const { wallpaper, fetchNewWallpaper, loading } = useWallpaper();
@@ -27,6 +28,31 @@ function HomePage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedEngineId, setSelectedEngineId] = useState('google');
   const [expandedFolders, setExpandedFolders] = useState({});
+
+  // Username State
+  const [username, setUsername] = useState(() => {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('username') || 'User';
+    }
+    return 'User';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('username', username);
+  }, [username]);
+
+  // Wallpaper Visibility State
+  const [isWallpaperVisible, setIsWallpaperVisible] = useState(() => {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('isWallpaperVisible');
+      return stored !== null ? JSON.parse(stored) : true;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('isWallpaperVisible', JSON.stringify(isWallpaperVisible));
+  }, [isWallpaperVisible]);
 
   // Derived State
   const folders = [...new Set(bookmarks.map((b) => b.folder || 'Uncategorized'))];
@@ -98,31 +124,42 @@ function HomePage() {
     }
   };
 
+  const toggleWallpaperVisibility = () => {
+    if (!isWallpaperVisible && !wallpaper) {
+      // If turning on and no wallpaper set, fetch one
+      fetchNewWallpaper();
+    }
+    setIsWallpaperVisible(!isWallpaperVisible);
+  };
+
+  const activeWallpaper = isWallpaperVisible ? wallpaper : null;
+
   return (
     <div
       className="min-h-screen flex flex-col pb-24 lg:pb-6 lg:pl-20 relative overflow-x-hidden transition-all duration-500 ease-in-out bg-cover bg-center bg-fixed bg-no-repeat"
       style={{
-        backgroundImage: wallpaper ? `url(${wallpaper})` : undefined
+        backgroundImage: activeWallpaper ? `url(${activeWallpaper})` : undefined
       }}
     >
       {/* Overlay to ensure text readability */}
-      <div className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 ${wallpaper ? 'bg-bg-solid/85 backdrop-blur-sm' : ''}`} />
+      <div className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 ${activeWallpaper ? 'bg-bg-solid/40 backdrop-blur-[2px]' : ''}`} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header
           theme={theme}
           toggleTheme={toggleTheme}
-          onImport={handleImport}
-          onExport={handleExport}
-          hasBookmarks={bookmarks.length > 0}
           onRefreshWallpaper={fetchNewWallpaper}
+          toggleWallpaperVisibility={toggleWallpaperVisibility}
+          isWallpaperVisible={isWallpaperVisible}
+          username={username}
+          onOpenSettings={() => navigate({ to: '/settings' })}
         />
 
-        <section className="px-5 pb-4 lg:px-12 lg:pb-3">
+        {/* <section className="px-5 pb-4 lg:px-12 lg:pb-3">
           <h1 className="text-2xl lg:text-3xl font-bold leading-snug text-text-primary max-w-7xl mx-auto">
             Your WebHome
           </h1>
-        </section>
+        </section> */}
 
         <SearchSection
           searchTerm={searchTerm}
@@ -133,6 +170,7 @@ function HomePage() {
           bookmarksCount={bookmarks.length}
           selectedEngineId={selectedEngineId}
           setSelectedEngineId={setSelectedEngineId}
+          hasWallpaper={!!activeWallpaper}
         />
 
         <MobileFilterSection
@@ -163,6 +201,7 @@ function HomePage() {
           </div>
         </main>
 
+        {/* <BottomNav onAdd={openAddModal} /> */}
         <BottomNav onAdd={openAddModal} />
 
         <BookmarkModal
@@ -172,6 +211,7 @@ function HomePage() {
           initialData={editingBookmark}
           availableFolders={[...new Set(bookmarks.map((b) => b.folder).filter(Boolean))]}
         />
+
       </div>
     </div>
   );

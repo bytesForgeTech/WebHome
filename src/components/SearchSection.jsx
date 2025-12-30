@@ -10,7 +10,8 @@ export function SearchSection({
     folders,
     bookmarksCount,
     selectedEngineId,
-    setSelectedEngineId
+    setSelectedEngineId,
+    hasWallpaper
 }) {
     const [showEngineDropdown, setShowEngineDropdown] = useState(false);
     const currentEngine = searchEngines.find(eng => eng.id === selectedEngineId);
@@ -24,7 +25,10 @@ export function SearchSection({
     };
 
     return (
-        <div className="sticky top-0 z-50 gradient-warm pb-4 rounded-b-3xl mb-4 transition-all">
+        <div className={`sticky top-0 z-50 pb-4 rounded-b-3xl mb-4 transition-all ${hasWallpaper
+                ? 'bg-transparent'
+                : 'gradient-warm shadow-md'
+            }`}>
             <div className="px-5 pb-2 lg:px-12">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-3 max-w-7xl mx-auto">
                     {/* Search Box with Integrated Engine Selector */}
